@@ -182,7 +182,7 @@ function withdrawalStatus(
   t: ReturnType<typeof useTranslation>['t'],
   status: AgentWithdrawal['status']
 ) {
-  if (status === 'pending') return t('Pending')
+  if (status === 'pending') return t('Withdrawal pending')
   if (status === 'paid') return t('Paid')
   return t('Rejected')
 }

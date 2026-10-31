@@ -473,7 +473,7 @@ export function AgentCommissionAdminPage() {
 }
 
 function withdrawalStatusKey(status: 'pending' | 'paid' | 'rejected') {
-  if (status === 'pending') return 'Pending'
+  if (status === 'pending') return 'Withdrawal pending'
   if (status === 'paid') return 'Paid'
   return 'Rejected'
 }
