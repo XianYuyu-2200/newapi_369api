@@ -24,31 +24,33 @@ type AgentInvitee struct {
 }
 
 type AgentSystemReport struct {
-	CommissionEnabled     bool           `json:"commissionEnabled"`
-	AgentStatus           string         `json:"agentStatus"`
-	InviteCode            string         `json:"inviteCode"`
-	ApplyNote             string         `json:"applyNote"`
-	ReviewNote            string         `json:"reviewNote"`
-	Level1Rate            int            `json:"level1Rate"`
-	Level2Rate            int            `json:"level2Rate"`
-	Level1RateCustom      bool           `json:"level1RateCustom"`
-	Level2RateCustom      bool           `json:"level2RateCustom"`
-	Level1Count           int64          `json:"level1Count"`
-	Level2Count           int64          `json:"level2Count"`
-	Users                 []AgentInvitee `json:"users"`
-	UserLimit             int            `json:"userLimit"`
-	UsersTruncated        bool           `json:"usersTruncated"`
-	TotalQuota            int            `json:"totalQuota"`
-	TransferredQuota      int            `json:"transferredQuota"`
-	DeductedQuota         int            `json:"deductedQuota"`
-	AvailableQuota        int            `json:"availableQuota"`
-	MinimumTransferQuota  int            `json:"minimumTransferQuota"`
-	Level1RechargeQuota   int            `json:"level1RechargeQuota"`
-	Level2RechargeQuota   int            `json:"level2RechargeQuota"`
-	Level1CommissionQuota int            `json:"level1CommissionQuota"`
-	Level2CommissionQuota int            `json:"level2CommissionQuota"`
-	Level1OrderCount      int64          `json:"level1OrderCount"`
-	Level2OrderCount      int64          `json:"level2OrderCount"`
+	CommissionEnabled      bool           `json:"commissionEnabled"`
+	AgentStatus            string         `json:"agentStatus"`
+	InviteCode             string         `json:"inviteCode"`
+	ApplyNote              string         `json:"applyNote"`
+	ReviewNote             string         `json:"reviewNote"`
+	Level1Rate             int            `json:"level1Rate"`
+	Level2Rate             int            `json:"level2Rate"`
+	Level1RateCustom       bool           `json:"level1RateCustom"`
+	Level2RateCustom       bool           `json:"level2RateCustom"`
+	Level1Count            int64          `json:"level1Count"`
+	Level2Count            int64          `json:"level2Count"`
+	Users                  []AgentInvitee `json:"users"`
+	UserLimit              int            `json:"userLimit"`
+	UsersTruncated         bool           `json:"usersTruncated"`
+	TotalQuota             int            `json:"totalQuota"`
+	TransferredQuota       int            `json:"transferredQuota"`
+	DeductedQuota          int            `json:"deductedQuota"`
+	AvailableQuota         int            `json:"availableQuota"`
+	MinimumTransferQuota   int            `json:"minimumTransferQuota"`
+	PendingWithdrawalQuota int            `json:"pendingWithdrawalQuota"`
+	AlipayAccount          string         `json:"alipayAccount"`
+	Level1RechargeQuota    int            `json:"level1RechargeQuota"`
+	Level2RechargeQuota    int            `json:"level2RechargeQuota"`
+	Level1CommissionQuota  int            `json:"level1CommissionQuota"`
+	Level2CommissionQuota  int            `json:"level2CommissionQuota"`
+	Level1OrderCount       int64          `json:"level1OrderCount"`
+	Level2OrderCount       int64          `json:"level2OrderCount"`
 }
 
 type agentInviteeRow struct {
@@ -112,9 +114,11 @@ func GetAgentSystem(userID int) (AgentSystemReport, error) {
 		"agent_review_note",
 		"agent_commission_transferred",
 		"agent_commission_deducted",
+		"agent_alipay_account",
 	).First(&current, userID).Error; err != nil {
 		return report, err
 	}
+	report.AlipayAccount = current.AgentAlipayAccount
 	report.AgentStatus = agentStatusName(current.AgentStatus)
 	report.ApplyNote = current.AgentApplyNote
 	report.ReviewNote = current.AgentReviewNote
@@ -147,6 +151,7 @@ func GetAgentSystem(userID int) (AgentSystemReport, error) {
 	report.TotalQuota = account.TotalQuota
 	report.TransferredQuota = account.TransferredQuota
 	report.DeductedQuota = account.DeductedQuota
+	report.PendingWithdrawalQuota = account.PendingWithdrawalQuota
 	report.AvailableQuota = account.AvailableQuota
 	report.MinimumTransferQuota = account.MinimumTransferQuota
 	report.Level1RechargeQuota = account.Level1RechargeQuota

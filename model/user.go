@@ -140,8 +140,9 @@ type User struct {
 	Group                      string                     `json:"group" gorm:"type:varchar(64);default:'default'"`
 	AffCode                    string                     `json:"aff_code" gorm:"type:varchar(32);column:aff_code;uniqueIndex"`
 	AffCount                   int                        `json:"aff_count" gorm:"type:int;default:0;column:aff_count"`
-	AffQuota                   int                        `json:"aff_quota" gorm:"type:int;default:0;column:aff_quota"`                                       // 邀请剩余额度
-	AffHistoryQuota            int                        `json:"aff_history_quota" gorm:"type:int;default:0;column:aff_history"`                             // 邀请历史额度
+	AffQuota                   int                        `json:"aff_quota" gorm:"type:int;default:0;column:aff_quota"`           // 邀请剩余额度
+	AffHistoryQuota            int                        `json:"aff_history_quota" gorm:"type:int;default:0;column:aff_history"` // 邀请历史额度
+	AgentAlipayAccount         string                     `json:"-" gorm:"type:varchar(128);default:'';column:agent_alipay_account"`
 	AgentCommissionTransferred int                        `json:"agent_commission_transferred" gorm:"type:int;default:0;column:agent_commission_transferred"` // 已转入余额的代理佣金，单位与 quota 相同
 	AgentCommissionDeducted    int                        `json:"-" gorm:"type:int;default:0;column:agent_commission_deducted"`                               // 管理员已核销的代理佣金，不增加 quota
 	AgentStatus                int                        `json:"-" gorm:"type:int;default:0;column:agent_status;index"`                                      // 0 未申请，1 待审核，2 已通过，3 已拒绝

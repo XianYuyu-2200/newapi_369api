@@ -28,18 +28,19 @@ type AgentCommissionTransfer struct {
 }
 
 type AgentCommissionAccount struct {
-	Enabled               bool  `json:"enabled"`
-	TotalQuota            int   `json:"totalQuota"`
-	TransferredQuota      int   `json:"transferredQuota"`
-	DeductedQuota         int   `json:"deductedQuota"`
-	AvailableQuota        int   `json:"availableQuota"`
-	MinimumTransferQuota  int   `json:"minimumTransferQuota"`
-	Level1RechargeQuota   int   `json:"level1RechargeQuota"`
-	Level2RechargeQuota   int   `json:"level2RechargeQuota"`
-	Level1CommissionQuota int   `json:"level1CommissionQuota"`
-	Level2CommissionQuota int   `json:"level2CommissionQuota"`
-	Level1OrderCount      int64 `json:"level1OrderCount"`
-	Level2OrderCount      int64 `json:"level2OrderCount"`
+	Enabled                bool  `json:"enabled"`
+	TotalQuota             int   `json:"totalQuota"`
+	TransferredQuota       int   `json:"transferredQuota"`
+	DeductedQuota          int   `json:"deductedQuota"`
+	PendingWithdrawalQuota int   `json:"pendingWithdrawalQuota"`
+	AvailableQuota         int   `json:"availableQuota"`
+	MinimumTransferQuota   int   `json:"minimumTransferQuota"`
+	Level1RechargeQuota    int   `json:"level1RechargeQuota"`
+	Level2RechargeQuota    int   `json:"level2RechargeQuota"`
+	Level1CommissionQuota  int   `json:"level1CommissionQuota"`
+	Level2CommissionQuota  int   `json:"level2CommissionQuota"`
+	Level1OrderCount       int64 `json:"level1OrderCount"`
+	Level2OrderCount       int64 `json:"level2OrderCount"`
 }
 
 type AgentCommissionTransferResult struct {
@@ -150,7 +151,13 @@ func loadAgentCommissionAccount(tx *gorm.DB, userID int, transferred int, deduct
 		return account, err
 	}
 	account.TotalQuota = total
-	account.AvailableQuota = commissionRemaining(total, transferred, deducted)
+	if err := tx.Model(&AgentCommissionWithdrawal{}).Where("user_id = ? AND status = ?", userID, AgentWithdrawalPending).Select("COALESCE(SUM(quota), 0)").Scan(&account.PendingWithdrawalQuota).Error; err != nil {
+		return account, err
+	}
+	account.AvailableQuota = commissionRemaining(total, transferred, deducted) - account.PendingWithdrawalQuota
+	if account.AvailableQuota < 0 {
+		account.AvailableQuota = 0
+	}
 	return account, nil
 }
 

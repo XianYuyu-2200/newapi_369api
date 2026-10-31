@@ -7485,5 +7485,27 @@
     "Pending payment orders can be reconciled from the Action column after verifying payment.": "核实到账后，可在订单操作栏完成待支付订单的补单。",
     "Reconcile": "补单",
     "Last week": "上周充值"
-  }
+  },
+"Alipay account": "支付宝账号",
+    "Enter Alipay account": "输入支付宝账号",
+    "Save account": "保存账号",
+    "Alipay account saved": "支付宝账号已保存",
+    "Bind your Alipay account first": "请先绑定支付宝账号",
+    "Withdrawal amount is below the minimum": "提现金额低于最低额度",
+    "Pending withdrawal amount {{amount}}": "待处理提现金额 {{amount}}",
+    "Withdrawal amount": "提现金额",
+    "Request withdrawal": "申请提现",
+    "Withdraw all available": "提现全部可用佣金",
+    "Withdrawal request submitted": "提现申请已提交",
+    "No withdrawal requests yet": "暂无提现申请",
+    "Pending": "待处理",
+    "Paid": "已付款",
+    "Rejected": "已拒绝",
+    "Alipay withdrawal requests": "支付宝提现申请",
+    "Processing note or rejection reason": "处理备注或拒绝原因",
+    "Failed to load withdrawal requests": "加载提现申请失败",
+    "Withdrawal marked as paid": "提现已标记为付款完成",
+    "Withdrawal rejected": "已拒绝提现申请",
+    "Mark paid": "标记已付款",
+    "Reject": "拒绝"
 }

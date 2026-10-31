@@ -7281,5 +7281,27 @@
     "Pending payment orders can be reconciled from the Action column after verifying payment.": "Pending payment orders can be reconciled from the Action column after verifying payment.",
     "Reconcile": "Reconcile",
     "Last week": "Last week"
-  }
+  },
+"Alipay account": "Tài khoản Alipay",
+    "Enter Alipay account": "Nhập tài khoản Alipay",
+    "Save account": "Lưu tài khoản",
+    "Alipay account saved": "Đã lưu tài khoản Alipay",
+    "Bind your Alipay account first": "Vui lòng liên kết tài khoản Alipay trước",
+    "Withdrawal amount is below the minimum": "Số tiền rút thấp hơn mức tối thiểu",
+    "Pending withdrawal amount {{amount}}": "Số tiền rút đang chờ {{amount}}",
+    "Withdrawal amount": "Số tiền rút",
+    "Request withdrawal": "Yêu cầu rút tiền",
+    "Withdraw all available": "Rút toàn bộ số dư khả dụng",
+    "Withdrawal request submitted": "Đã gửi yêu cầu rút tiền",
+    "No withdrawal requests yet": "Chưa có yêu cầu rút tiền",
+    "Pending": "Đang chờ",
+    "Paid": "Đã thanh toán",
+    "Rejected": "Bị từ chối",
+    "Alipay withdrawal requests": "Yêu cầu rút Alipay",
+    "Processing note or rejection reason": "Ghi chú xử lý hoặc lý do từ chối",
+    "Failed to load withdrawal requests": "Không thể tải yêu cầu rút tiền",
+    "Withdrawal marked as paid": "Đã đánh dấu đã thanh toán",
+    "Withdrawal rejected": "Đã từ chối yêu cầu rút tiền",
+    "Mark paid": "Đánh dấu đã thanh toán",
+    "Reject": "Từ chối"
 }

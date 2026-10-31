@@ -7441,5 +7441,27 @@
     "Pending payment orders can be reconciled from the Action column after verifying payment.": "Pending payment orders can be reconciled from the Action column after verifying payment.",
     "Reconcile": "Reconcile",
     "Last week": "Last week"
-  }
+  },
+"Alipay account": "支付宝帳號",
+    "Enter Alipay account": "輸入支付寶帳號",
+    "Save account": "儲存帳號",
+    "Alipay account saved": "支付寶帳號已儲存",
+    "Bind your Alipay account first": "請先綁定支付寶帳號",
+    "Withdrawal amount is below the minimum": "提現金額低於最低額度",
+    "Pending withdrawal amount {{amount}}": "待處理提現金額 {{amount}}",
+    "Withdrawal amount": "提現金額",
+    "Request withdrawal": "申請提現",
+    "Withdraw all available": "提現全部可用佣金",
+    "Withdrawal request submitted": "提現申請已提交",
+    "No withdrawal requests yet": "暫無提現申請",
+    "Pending": "待處理",
+    "Paid": "已付款",
+    "Rejected": "已拒絕",
+    "Alipay withdrawal requests": "支付寶提現申請",
+    "Processing note or rejection reason": "處理備註或拒絕原因",
+    "Failed to load withdrawal requests": "載入提現申請失敗",
+    "Withdrawal marked as paid": "提現已標記為付款完成",
+    "Withdrawal rejected": "已拒絕提現申請",
+    "Mark paid": "標記已付款",
+    "Reject": "拒絕"
 }

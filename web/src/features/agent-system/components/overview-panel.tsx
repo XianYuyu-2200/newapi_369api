@@ -17,7 +17,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 
-import { Link } from '@tanstack/react-router'
 import { Copy } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
@@ -27,7 +26,7 @@ import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard'
 import { formatQuota } from '@/lib/format'
 
 import type { AgentSystemReport } from '../types'
-import { CommissionTransfer } from './commission-transfer'
+import { CommissionWithdrawal } from './commission-withdrawal'
 import { MetricCard } from './metric'
 
 export function OverviewPanel(props: { report?: AgentSystemReport }) {
@@ -106,21 +105,16 @@ export function OverviewPanel(props: { report?: AgentSystemReport }) {
           <div className='mt-4 flex flex-wrap items-center justify-between gap-3 border-t pt-4'>
             <p className='text-muted-foreground text-sm'>
               {t(
-                'Available commission can be transferred into your account balance. After customer service pays by WeChat or Alipay, an admin settles that amount. Settled or transferred commission cannot be used again.'
+                'Request a withdrawal to your bound Alipay account. The amount is reserved while the request is pending and released if it is rejected.'
               )}
             </p>
             <div className='flex flex-wrap gap-2'>
-              <CommissionTransfer
+              <CommissionWithdrawal
                 availableQuota={report?.availableQuota ?? 0}
                 minimumQuota={report?.minimumTransferQuota ?? 0}
+                alipayAccount={report?.alipayAccount ?? ''}
+                pendingQuota={report?.pendingWithdrawalQuota ?? 0}
               />
-              <Button
-                size='sm'
-                variant='outline'
-                render={<Link to='/support' target='_blank' rel='noreferrer' />}
-              >
-                {t('Contact support to withdraw')}
-              </Button>
             </div>
           </div>
         </section>
@@ -159,16 +153,12 @@ export function OverviewPanel(props: { report?: AgentSystemReport }) {
         <MetricCard
           label={t('Level 1 rate')}
           value={report == null ? '—' : `${report.level1Rate.toFixed(2)}%`}
-          hint={
-            report?.level1RateCustom ? t('Custom rate') : t('Default rate')
-          }
+          hint={report?.level1RateCustom ? t('Custom rate') : t('Default rate')}
         />
         <MetricCard
           label={t('Level 2 rate')}
           value={report == null ? '—' : `${report.level2Rate.toFixed(2)}%`}
-          hint={
-            report?.level2RateCustom ? t('Custom rate') : t('Default rate')
-          }
+          hint={report?.level2RateCustom ? t('Custom rate') : t('Default rate')}
         />
       </div>
       <p className='text-muted-foreground text-sm'>

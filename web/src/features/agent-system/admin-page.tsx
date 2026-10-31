@@ -40,6 +40,8 @@ import { cn } from '@/lib/utils'
 import {
   deductAgentCommission,
   listAgentCommissionDeductions,
+  listAgentWithdrawals,
+  processAgentWithdrawal,
   searchAgentCommissionAccounts,
 } from './api'
 import { AdminApprovedAgents } from './components/admin-approved-agents'
@@ -57,6 +59,14 @@ export function AgentCommissionAdminPage() {
   const [amount, setAmount] = useState('')
   const [note, setNote] = useState('')
   const [deducting, setDeducting] = useState(false)
+  const withdrawals = useQuery({
+    queryKey: ['agent-admin-withdrawals'],
+    queryFn: listAgentWithdrawals,
+  })
+  const [withdrawalNote, setWithdrawalNote] = useState('')
+  const [processingWithdrawal, setProcessingWithdrawal] = useState<
+    number | null
+  >(null)
   const deductions = useQuery({
     queryKey: ['agent-commission-deductions'],
     queryFn: listAgentCommissionDeductions,
@@ -133,6 +143,32 @@ export function AgentCommissionAdminPage() {
       toast.error(getServerErrorMessage(error))
     } finally {
       setDeducting(false)
+    }
+  }
+
+  async function processWithdrawal(id: number, paid: boolean) {
+    setProcessingWithdrawal(id)
+    try {
+      await processAgentWithdrawal(id, paid, withdrawalNote.trim())
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['agent-admin-withdrawals'],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['agent-commission-deductions'],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['agent-commission-accounts'],
+        }),
+      ])
+      setWithdrawalNote('')
+      toast.success(
+        paid ? t('Withdrawal marked as paid') : t('Withdrawal rejected')
+      )
+    } catch (error) {
+      toast.error(getServerErrorMessage(error))
+    } finally {
+      setProcessingWithdrawal(null)
     }
   }
 
@@ -331,6 +367,73 @@ export function AgentCommissionAdminPage() {
         </section>
 
         <section className='bg-card mt-4 rounded-xl border p-4 sm:p-5'>
+          <h3 className='font-semibold'>{t('Alipay withdrawal requests')}</h3>
+          <label className='mt-3 grid gap-1 text-sm'>
+            <span>{t('Processing note or rejection reason')}</span>
+            <Input
+              value={withdrawalNote}
+              maxLength={200}
+              onChange={(event) => setWithdrawalNote(event.target.value)}
+            />
+          </label>
+          {withdrawals.isError ? (
+            <p className='mt-3 text-sm text-red-600'>
+              {t('Failed to load withdrawal requests')}
+            </p>
+          ) : null}
+          {!withdrawals.isLoading && (withdrawals.data?.length ?? 0) === 0 ? (
+            <p className='text-muted-foreground mt-3 text-sm'>
+              {t('No withdrawal requests yet')}
+            </p>
+          ) : null}
+          <div className='mt-3 divide-y'>
+            {withdrawals.data?.map((row) => (
+              <div
+                key={row.id}
+                className='flex flex-wrap items-center justify-between gap-3 py-3 text-sm'
+              >
+                <div>
+                  <p className='font-medium'>
+                    {row.username || `#${row.userId}`} ·{' '}
+                    {formatQuota(row.quota)} ·{' '}
+                    {t(withdrawalStatusKey(row.status))}
+                  </p>
+                  <p className='mt-1'>
+                    {t('Alipay account')}:{' '}
+                    <span className='font-mono select-all'>
+                      {row.alipayAccount}
+                    </span>
+                  </p>
+                  <p className='text-muted-foreground mt-1'>
+                    {formatTimestamp(row.createdAt)}
+                    {row.adminNote ? ` · ${row.adminNote}` : ''}
+                  </p>
+                </div>
+                {row.status === 'pending' ? (
+                  <div className='flex gap-2'>
+                    <Button
+                      size='sm'
+                      disabled={processingWithdrawal === row.id}
+                      onClick={() => void processWithdrawal(row.id, true)}
+                    >
+                      {t('Mark paid')}
+                    </Button>
+                    <Button
+                      size='sm'
+                      variant='destructive'
+                      disabled={processingWithdrawal === row.id}
+                      onClick={() => void processWithdrawal(row.id, false)}
+                    >
+                      {t('Reject')}
+                    </Button>
+                  </div>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className='bg-card mt-4 rounded-xl border p-4 sm:p-5'>
           <h3 className='font-semibold'>{t('Recent commission deductions')}</h3>
           {deductions.isError ? (
             <p className='mt-3 text-sm text-red-600 dark:text-red-400'>
@@ -367,4 +470,10 @@ export function AgentCommissionAdminPage() {
       </SectionPageLayout.Content>
     </SectionPageLayout>
   )
+}
+
+function withdrawalStatusKey(status: 'pending' | 'paid' | 'rejected') {
+  if (status === 'pending') return 'Pending'
+  if (status === 'paid') return 'Paid'
+  return 'Rejected'
 }

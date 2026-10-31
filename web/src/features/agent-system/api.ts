@@ -25,12 +25,12 @@ import type {
   AgentCommissionAdminAccount,
   AgentCommissionDeductResult,
   AgentCommissionDeduction,
-  AgentCommissionTransferResult,
   AgentInviteePage,
   AgentRateUpdate,
   AgentRecordPage,
   AgentStatsReport,
   AgentSystemReport,
+  AgentWithdrawal,
 } from './types'
 
 type AgentSystemResponse = {
@@ -50,16 +50,38 @@ export async function getAgentSystem() {
   }
 }
 
-export async function transferAgentCommission(quota: number) {
-  const res = await api.post('/api/agent-system/transfer', { quota })
-  const body = requireServerSuccess(res.data) as {
-    success: boolean
-    data?: AgentCommissionTransferResult
-  }
-  if (!body.data) {
-    throw new Error('Failed to transfer commission')
-  }
-  return body.data
+export async function updateAgentAlipay(account: string) {
+  const res = await api.put('/api/agent-system/alipay', { account })
+  return requireServerSuccess(res.data)
+}
+
+export async function createAgentWithdrawal(quota: number) {
+  const res = await api.post('/api/agent-system/withdrawals', { quota })
+  return requireServerSuccess(res.data)
+}
+
+export async function listMyAgentWithdrawals() {
+  const res = await api.get('/api/agent-system/withdrawals')
+  const body = requireServerSuccess(res.data) as { data?: AgentWithdrawal[] }
+  return body.data ?? []
+}
+
+export async function listAgentWithdrawals() {
+  const res = await api.get('/api/agent-system/admin/withdrawals')
+  const body = requireServerSuccess(res.data) as { data?: AgentWithdrawal[] }
+  return body.data ?? []
+}
+
+export async function processAgentWithdrawal(
+  id: number,
+  paid: boolean,
+  note: string
+) {
+  const res = await api.post(
+    `/api/agent-system/admin/withdrawals/${id}/process`,
+    { paid, note }
+  )
+  return requireServerSuccess(res.data)
 }
 
 export async function searchAgentCommissionAccounts(keyword: string) {

@@ -49,6 +49,8 @@ export type AgentSystemReport = {
   transferredQuota?: number
   deductedQuota?: number
   availableQuota?: number
+  pendingWithdrawalQuota?: number
+  alipayAccount?: string
   minimumTransferQuota?: number
   level1RechargeQuota?: number
   level2RechargeQuota?: number
@@ -58,11 +60,18 @@ export type AgentSystemReport = {
   level2OrderCount?: number
 }
 
-export type AgentCommissionTransferResult = {
+export type AgentWithdrawal = {
+  id: number
+  userId: number
+  username?: string
   quota: number
-  availableQuota: number
-  transferredQuota: number
-  balanceQuota: number
+  alipayAccount: string
+  status: 'pending' | 'paid' | 'rejected'
+  adminId: number
+  adminUsername?: string
+  adminNote: string
+  createdAt: number
+  processedAt: number
 }
 
 export type AgentCommissionAdminAccount = {

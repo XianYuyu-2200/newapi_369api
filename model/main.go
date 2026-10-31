@@ -378,6 +378,7 @@ func migrateDB() error {
 		&UserAccessToken{},
 		&AgentCommissionTransfer{},
 		&AgentCommissionDeduction{},
+		&AgentCommissionWithdrawal{},
 	)
 	if err != nil {
 		return err

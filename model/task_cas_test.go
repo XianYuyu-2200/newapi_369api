@@ -62,6 +62,7 @@ func TestMain(m *testing.M) {
 		&UserAccessToken{},
 		&AgentCommissionTransfer{},
 		&AgentCommissionDeduction{},
+		&AgentCommissionWithdrawal{},
 	); err != nil {
 		panic("failed to migrate: " + err.Error())
 	}
@@ -90,6 +91,7 @@ func truncateTables(t *testing.T) {
 		DB.Exec("DELETE FROM top_ups")
 		DB.Exec("DELETE FROM agent_commission_transfers")
 		DB.Exec("DELETE FROM agent_commission_deductions")
+		DB.Exec("DELETE FROM agent_commission_withdrawals")
 		DB.Exec("DELETE FROM subscription_orders")
 		DB.Exec("DELETE FROM subscription_plans")
 		DB.Exec("DELETE FROM user_subscriptions")

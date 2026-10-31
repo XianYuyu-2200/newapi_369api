@@ -21,6 +21,74 @@ func GetAgentSystem(c *gin.Context) {
 	common.ApiSuccess(c, report)
 }
 
+func UpdateAgentAlipay(c *gin.Context) {
+	var request struct {
+		Account string `json:"account"`
+	}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		common.ApiErrorT(c, "Invalid parameters")
+		return
+	}
+	account, err := model.UpdateAgentAlipayAccount(c.GetInt("id"), request.Account)
+	if err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	common.ApiSuccess(c, gin.H{"alipayAccount": account})
+}
+
+func CreateAgentWithdrawal(c *gin.Context) {
+	var request struct {
+		Quota int `json:"quota"`
+	}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		common.ApiErrorT(c, "Invalid parameters")
+		return
+	}
+	result, err := model.CreateAgentWithdrawal(c.GetInt("id"), request.Quota)
+	if err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	common.ApiSuccess(c, result)
+}
+
+func ListMyAgentWithdrawals(c *gin.Context) {
+	rows, err := model.ListAgentWithdrawals(c.GetInt("id"), 50)
+	if err != nil {
+		common.ApiErrorT(c, "Failed to load withdrawal requests")
+		return
+	}
+	common.ApiSuccess(c, rows)
+}
+
+func AdminListAgentWithdrawals(c *gin.Context) {
+	rows, err := model.ListAgentWithdrawals(0, 100)
+	if err != nil {
+		common.ApiErrorT(c, "Failed to load withdrawal requests")
+		return
+	}
+	common.ApiSuccess(c, rows)
+}
+
+func AdminProcessAgentWithdrawal(c *gin.Context) {
+	var request struct {
+		Paid bool   `json:"paid"`
+		Note string `json:"note"`
+	}
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil || c.ShouldBindJSON(&request) != nil {
+		common.ApiErrorT(c, "Invalid parameters")
+		return
+	}
+	row, err := model.ProcessAgentWithdrawal(c.GetInt("id"), c.GetInt("role"), id, request.Paid, request.Note)
+	if err != nil {
+		common.ApiError(c, err)
+		return
+	}
+	common.ApiSuccess(c, row)
+}
+
 func TransferAgentCommission(c *gin.Context) {
 	var request struct {
 		Quota int `json:"quota"`

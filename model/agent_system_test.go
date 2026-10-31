@@ -972,3 +972,48 @@ func TestListApprovedAgentsShowsQuotaAndCommission(t *testing.T) {
 	_, err = ListApprovedAgents(common.RoleAdminUser, 0, 20)
 	require.Error(t, err)
 }
+
+func TestAgentWithdrawalReservesAndSettlesCommission(t *testing.T) {
+	truncateTables(t)
+	previous := common.QuotaPerUnit
+	common.QuotaPerUnit = 500000
+	t.Cleanup(func() { common.QuotaPerUnit = previous })
+	agent := User{Username: "withdraw-agent", Password: "password-pass", Role: common.RoleCommonUser, Status: common.UserStatusEnabled, Group: "default", AgentAlipayAccount: "pay@example.com"}
+	require.NoError(t, DB.Create(&agent).Error)
+	invitee := User{Username: "withdraw-invitee", Password: "password-pass", Role: common.RoleCommonUser, Status: common.UserStatusEnabled, Group: "default"}
+	require.NoError(t, invitee.Insert(agent.Id))
+	require.NoError(t, DB.Create(&TopUp{UserId: invitee.Id, Amount: 10, Money: 10, TradeNo: "withdraw-topup", Status: common.TopUpStatusSuccess}).Error)
+
+	first, err := CreateAgentWithdrawal(agent.Id, 500000)
+	require.NoError(t, err)
+	require.Equal(t, AgentWithdrawalPending, first.Withdrawal.Status)
+	require.Equal(t, "pay@example.com", first.Withdrawal.AlipayAccount)
+	require.Equal(t, 250000, first.AvailableQuota)
+	_, err = TransferAgentCommission(agent.Id, 300000)
+	require.Error(t, err, "pending withdrawal must reserve commission")
+
+	rejected, err := ProcessAgentWithdrawal(12, common.RoleRootUser, first.Withdrawal.Id, false, "账号有误")
+	require.NoError(t, err)
+	require.Equal(t, AgentWithdrawalRejected, rejected.Status)
+	_, err = ProcessAgentWithdrawal(12, common.RoleRootUser, first.Withdrawal.Id, true, "重复处理")
+	require.Error(t, err)
+	report, err := GetAgentSystem(agent.Id)
+	require.NoError(t, err)
+	require.Equal(t, 750000, report.AvailableQuota)
+
+	second, err := CreateAgentWithdrawal(agent.Id, 500000)
+	require.NoError(t, err)
+	paid, err := ProcessAgentWithdrawal(12, common.RoleRootUser, second.Withdrawal.Id, true, "转账流水 123")
+	require.NoError(t, err)
+	require.Equal(t, AgentWithdrawalPaid, paid.Status)
+	report, err = GetAgentSystem(agent.Id)
+	require.NoError(t, err)
+	require.Equal(t, 250000, report.AvailableQuota)
+	require.Equal(t, 500000, report.DeductedQuota)
+	rows, err := ListAgentWithdrawals(agent.Id, 20)
+	require.NoError(t, err)
+	require.Len(t, rows, 2)
+	var deductions int64
+	require.NoError(t, DB.Model(&AgentCommissionDeduction{}).Where("user_id = ?", agent.Id).Count(&deductions).Error)
+	require.Equal(t, int64(1), deductions)
+}

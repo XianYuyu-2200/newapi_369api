@@ -7441,5 +7441,27 @@
     "Pending payment orders can be reconciled from the Action column after verifying payment.": "Pending payment orders can be reconciled from the Action column after verifying payment.",
     "Reconcile": "Reconcile",
     "Last week": "Last week"
-  }
+  },
+"Alipay account": "Alipay account",
+    "Enter Alipay account": "Enter Alipay account",
+    "Save account": "Save account",
+    "Alipay account saved": "Alipay account saved",
+    "Bind your Alipay account first": "Bind your Alipay account first",
+    "Withdrawal amount is below the minimum": "Withdrawal amount is below the minimum",
+    "Pending withdrawal amount {{amount}}": "Pending withdrawal amount {{amount}}",
+    "Withdrawal amount": "Withdrawal amount",
+    "Request withdrawal": "Request withdrawal",
+    "Withdraw all available": "Withdraw all available",
+    "Withdrawal request submitted": "Withdrawal request submitted",
+    "No withdrawal requests yet": "No withdrawal requests yet",
+    "Pending": "Pending",
+    "Paid": "Paid",
+    "Rejected": "Rejected",
+    "Alipay withdrawal requests": "Alipay withdrawal requests",
+    "Processing note or rejection reason": "Processing note or rejection reason",
+    "Failed to load withdrawal requests": "Failed to load withdrawal requests",
+    "Withdrawal marked as paid": "Withdrawal marked as paid",
+    "Withdrawal rejected": "Withdrawal rejected",
+    "Mark paid": "Mark paid",
+    "Reject": "Reject"
 }
